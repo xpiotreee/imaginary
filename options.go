@@ -146,6 +146,7 @@ func BimgOptions(o ImageOptions) bimg.Options {
 		Interlace:      o.Interlace,
 		Palette:        o.Palette,
 		Speed:          o.Speed,
+		DPI:            o.DPI,
 	}
 
 	if len(o.Background) != 0 {
