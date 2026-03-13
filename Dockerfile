@@ -43,6 +43,7 @@ ENV GO111MODULE=on
 
 COPY go.mod .
 COPY go.sum .
+COPY bimg ./bimg
 
 RUN go mod download
 

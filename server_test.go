@@ -405,6 +405,98 @@ func TestMountInvalidPath(t *testing.T) {
 	}
 }
 
+func TestConvertPDFToWebpWithDPI(t *testing.T) {
+	ts := testServer(controller(Convert))
+	defer ts.Close()
+
+	bufDefault := readFile("test.pdf")
+	resDefault, err := http.Post(ts.URL+"?type=webp", "application/pdf", bufDefault)
+	if err != nil {
+		t.Fatal("Cannot perform the request")
+	}
+	if resDefault.StatusCode != 200 {
+		t.Fatalf("Invalid response status for default DPI: %s", resDefault.Status)
+	}
+	imageDefault, err := ioutil.ReadAll(resDefault.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(imageDefault) == 0 {
+		t.Fatal("Empty response body for default DPI")
+	}
+	sizeDefault, err := bimg.NewImage(imageDefault).Size()
+	if err != nil {
+		t.Fatalf("Cannot read default DPI image size: %s", err)
+	}
+
+	bufHighDPI := readFile("test.pdf")
+	resHighDPI, err := http.Post(ts.URL+"?type=webp&dpi=300", "application/pdf", bufHighDPI)
+	if err != nil {
+		t.Fatal("Cannot perform the request")
+	}
+	if resHighDPI.StatusCode != 200 {
+		t.Fatalf("Invalid response status for high DPI: %s", resHighDPI.Status)
+	}
+	imageHighDPI, err := ioutil.ReadAll(resHighDPI.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(imageHighDPI) == 0 {
+		t.Fatal("Empty response body for high DPI")
+	}
+	sizeHighDPI, err := bimg.NewImage(imageHighDPI).Size()
+	if err != nil {
+		t.Fatalf("Cannot read high DPI image size: %s", err)
+	}
+
+	// 300 DPI / 72 DPI ≈ 4.17x scaling per dimension
+	if sizeHighDPI.Width <= sizeDefault.Width {
+		t.Errorf("High DPI width (%d) should be greater than default DPI width (%d)", sizeHighDPI.Width, sizeDefault.Width)
+	}
+	if sizeHighDPI.Height <= sizeDefault.Height {
+		t.Errorf("High DPI height (%d) should be greater than default DPI height (%d)", sizeHighDPI.Height, sizeDefault.Height)
+	}
+
+	if bimg.DetermineImageTypeName(imageHighDPI) != "webp" {
+		t.Fatalf("Invalid image type: expected webp")
+	}
+}
+
+func TestConvertPDFToWebpDefaultDPI(t *testing.T) {
+	ts := testServer(controller(Convert))
+	defer ts.Close()
+
+	buf := readFile("test.pdf")
+	res, err := http.Post(ts.URL+"?type=webp", "application/pdf", buf)
+	if err != nil {
+		t.Fatal("Cannot perform the request")
+	}
+	if res.StatusCode != 200 {
+		t.Fatalf("Invalid response status: %s", res.Status)
+	}
+
+	image, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(image) == 0 {
+		t.Fatal("Empty response body")
+	}
+
+	if bimg.DetermineImageTypeName(image) != "webp" {
+		t.Fatalf("Invalid image type: expected webp")
+	}
+
+	size, err := bimg.NewImage(image).Size()
+	if err != nil {
+		t.Fatalf("Cannot read image size: %s", err)
+	}
+
+	if size.Width == 0 || size.Height == 0 {
+		t.Fatalf("Invalid image dimensions: %dx%d", size.Width, size.Height)
+	}
+}
+
 func controller(op Operation) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		buf, _ := ioutil.ReadAll(r.Body)
