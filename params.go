@@ -287,6 +287,7 @@ func coerceColorSpace(io *ImageOptions, param interface{}) error {
 func coerceGravity(io *ImageOptions, param interface{}) error {
 	if v, ok := param.(string); ok {
 		io.Gravity = parseGravity(v)
+		io.IsDefinedField.Gravity = true
 		return nil
 	}
 

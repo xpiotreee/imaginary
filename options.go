@@ -65,6 +65,7 @@ type IsDefinedField struct {
 	StripMetadata bool
 	Interlace     bool
 	Palette       bool
+	Gravity       bool
 }
 
 // PipelineOperation represents the structure for an operation field.
