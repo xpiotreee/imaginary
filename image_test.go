@@ -14,7 +14,7 @@ func TestImageResize(t *testing.T) {
 		if err != nil {
 			t.Errorf("Cannot process image: %s", err)
 		}
-		if img.Mime != "image/jpeg" {
+		if img.Type != "image/jpeg" {
 			t.Error("Invalid image MIME type")
 		}
 		if assertSize(img.Body, opts.Width, opts.Height) != nil {
@@ -30,7 +30,7 @@ func TestImageResize(t *testing.T) {
 		if err != nil {
 			t.Errorf("Cannot process image: %s", err)
 		}
-		if img.Mime != "image/jpeg" {
+		if img.Type != "image/jpeg" {
 			t.Error("Invalid image MIME type")
 		}
 		if err := assertSize(img.Body, 300, 404); err != nil {
@@ -46,7 +46,7 @@ func TestImageResize(t *testing.T) {
 		if err != nil {
 			t.Errorf("Cannot process image: %s", err)
 		}
-		if img.Mime != "image/jpeg" {
+		if img.Type != "image/jpeg" {
 			t.Error("Invalid image MIME type")
 		}
 
@@ -64,7 +64,7 @@ func TestImageResize(t *testing.T) {
 		if err != nil {
 			t.Errorf("Cannot process image: %s", err)
 		}
-		if img.Mime != "image/jpeg" {
+		if img.Type != "image/jpeg" {
 			t.Error("Invalid image MIME type")
 		}
 
@@ -84,7 +84,7 @@ func TestImageFit(t *testing.T) {
 	if err != nil {
 		t.Errorf("Cannot process image: %s", err)
 	}
-	if img.Mime != "image/jpeg" {
+	if img.Type != "image/jpeg" {
 		t.Error("Invalid image MIME type")
 	}
 	// 550x740 -> 222.9x300
@@ -99,7 +99,7 @@ func TestImageAutoRotate(t *testing.T) {
 	if err != nil {
 		t.Errorf("Cannot process image: %s", err)
 	}
-	if img.Mime != "image/jpeg" {
+	if img.Type != "image/jpeg" {
 		t.Error("Invalid image MIME type")
 	}
 	if assertSize(img.Body, 550, 740) != nil {
@@ -133,7 +133,7 @@ func TestImagePipelineOperations(t *testing.T) {
 	if err != nil {
 		t.Errorf("Cannot process image: %s", err)
 	}
-	if img.Mime != "image/webp" {
+	if img.Type != "image/webp" {
 		t.Error("Invalid image MIME type")
 	}
 	if assertSize(img.Body, width, height) != nil {
