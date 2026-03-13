@@ -8,3 +8,5 @@ require (
 	github.com/rs/cors v0.0.0-20170727213201-7af7a1e09ba3
 	github.com/throttled/throttled/v2 v2.15.0
 )
+
+replace github.com/h2non/bimg => ./bimg
