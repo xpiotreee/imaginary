@@ -374,7 +374,9 @@ func TestMountDirectory(t *testing.T) {
 }
 
 func TestMountInvalidDirectory(t *testing.T) {
-	fn := ImageMiddleware(ServerOptions{Mount: "_invalid_", MaxAllowedPixels: 18.0})(Crop)
+	opts := ServerOptions{Mount: "_invalid_", MaxAllowedPixels: 18.0}
+	fn := ImageMiddleware(opts)(Crop)
+	LoadSources(opts)
 	ts := httptest.NewServer(fn)
 	url := ts.URL + "?top=100&left=100&areawidth=200&areaheight=120&file=large.jpg"
 	defer ts.Close()

@@ -135,7 +135,7 @@ func imageHandler(w http.ResponseWriter, r *http.Request, buf []byte, operation 
 		return
 	}
 
-	image, err := operation.Run(buf, opts)
+	image, err := operation(buf, opts)
 	if err != nil {
 		// Ensure the Vary header is set when an error occurs
 		if vary != "" {
@@ -147,8 +147,8 @@ func imageHandler(w http.ResponseWriter, r *http.Request, buf []byte, operation 
 
 	// Expose Content-Length response header
 	w.Header().Set("Content-Length", strconv.Itoa(len(image.Body)))
-	w.Header().Set("Content-Type", image.Mime)
-	if image.Mime != "application/json" && o.ReturnSize {
+	w.Header().Set("Content-Type", image.Type)
+	if image.Type != "application/json" && o.ReturnSize {
 		meta, err := bimg.Metadata(image.Body)
 		if err == nil {
 			w.Header().Set("Image-Width", strconv.Itoa(meta.Size.Width))
